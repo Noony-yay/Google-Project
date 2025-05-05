@@ -36,4 +36,9 @@ def setup() -> set[Card]:
       deck.add(Card(n, t))
   return deck
 
-print(setup())
+
+def main():
+  deck = setup()
+  # Pick 7 random cards from deck and make it the player's hand
+  # Let the player choose cards to play
+  # Call calc_score with the cards the player played
