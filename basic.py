@@ -1,4 +1,5 @@
 from typing import List 
+from tkinter import * 
 
 class Card:
   def __init__(self, num, t):
@@ -26,9 +27,6 @@ def calc_score(cards: List[Card]) -> int:
       score += 2 ** count
   return score
 
-# print(calc_score([Card(3, "hearts"), Card(4, "hearts"), Card(2, "spades")]))
-
-
 def setup() -> set[Card]:
   deck: set[Card] = set()
   for t in TYPES:
@@ -37,3 +35,14 @@ def setup() -> set[Card]:
   return deck
 
 print(setup())
+
+window = Tk()
+window.title("Google Project")
+window.geometry('1200x400')
+window.mainloop()
+#window.tk.call('tk', 'scaling', 3.0)  - makes thesize of everything 3 times bigger
+
+#x = Button(window, text="?????", command=func_name)  - creates a button
+#x.grid(column=0, row=2) - place it in the window (learn how to)
+#def func_name():
+#  window.destroy() - for example
