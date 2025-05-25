@@ -1,48 +1,54 @@
-from typing import List 
-from tkinter import * 
-
-class Card:
-  def __init__(self, num, t):
-    self.number: int = num
-    self.t: str = t
-  
-  def __repr__(self):
-    return f"{self.number} of {self.t}"
-
-TYPES = ["clubs", "spades", "hearts", "diamond"]
-
-def calc_score(cards: List[Card]) -> int:
-  types = {
-    "clubs": 0,
-    "spades": 0,
-    "hearts": 0,
-    "diamond": 0
-  }
-  for card in cards:
-    types[card.t] += 1
-
-  score = 0
-  for count in types.values():
-    if count > 0:
-      score += 2 ** count
-  return score
-
-def setup() -> set[Card]:
-  deck: set[Card] = set()
-  for t in TYPES:
-    for n in range(1, 14):
-      deck.add(Card(n, t))
-  return deck
-
-print(setup())
-
 window = Tk()
-window.title("Google Project")
-window.geometry('1200x400')
-window.mainloop()
-#window.tk.call('tk', 'scaling', 3.0)  - makes thesize of everything 3 times bigger
+window.title("Card Game")
+window.geometry("1200x500")
 
-#x = Button(window, text="?????", command=func_name)  - creates a button
-#x.grid(column=0, row=2) - place it in the window (learn how to)
-#def func_name():
-#  window.destroy() - for example
+canvas = Canvas(window, width=1200, height=400, bg="green")
+canvas.pack()
+
+
+card_items = []  
+selected_cards = []
+
+
+deck = list(setup())
+user_cards = sample(deck, 5)
+
+for i, card in enumerate(user_cards):
+    x = 50 + i * 150
+    y = 100
+    rect = canvas.create_rectangle(x, y, x + 100, y + 150, fill="white", outline="black")
+    text = canvas.create_text(x + 50, y + 75, text=str(card), font=("Arial", 10))
+    card_items.append({"rect": rect, "text": text, "card": card})
+
+def on_canvas_click(event):
+    clicked = canvas.find_closest(event.x, event.y)[0]
+    for item in card_items:
+        if clicked in [item["rect"], item["text"]]:
+            card = item["card"]
+            if card in selected_cards:
+                selected_cards.remove(card)
+                canvas.itemconfig(item["rect"], fill="white")
+            elif len(selected_cards) < 5:
+                selected_cards.append(card)
+                canvas.itemconfig(item["rect"], fill="lightblue")
+            break
+    update_button_state()
+
+canvas.bind("<Button-1>", on_canvas_click)
+
+def send_cards():
+    print("You sent:")
+    for c in selected_cards:
+        print(c)
+    window.destroy()
+
+def update_button_state():
+    if len(selected_cards) == 5:
+        send_btn.config(state="normal")
+    else:
+        send_btn.config(state="disabled")
+
+send_btn = Button(window, text="Send Cards", command=send_cards, state="disabled")
+send_btn.pack(pady=10)
+
+window.mainloop()
