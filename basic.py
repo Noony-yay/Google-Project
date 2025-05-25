@@ -1,5 +1,6 @@
-from typing import List 
+from typing import List, Set
 from tkinter import * 
+from random import sample
 
 class Card:
   def __init__(self, num, t):
@@ -27,7 +28,7 @@ def calc_score(cards: List[Card]) -> int:
       score += 2 ** count
   return score
 
-def setup() -> set[Card]:
+def setup() -> Set[Card]:
   deck: set[Card] = set()
   for t in TYPES:
     for n in range(1, 14):
@@ -37,8 +38,38 @@ def setup() -> set[Card]:
 print(setup())
 
 window = Tk()
-window.title("Google Project")
+window.title("Google Project - card game")
 window.geometry('1200x400')
+
+canvas = Canvas(window, width=1200, height=400, bg="green")
+canvas.pack()
+
+deck = list(setup())
+user_cards = sample(deck, 5)
+card_items = []
+selected_cards = []
+
+i = 0
+for card in user_cards:
+    x = 50 + i * 120
+    y = 100
+    rect = canvas.create_rectangle(x, y, x + 100, y + 150, fill="white", outline="black")
+    label = canvas.create_text(x + 50, y + 75, text=str(card), font=("Arial", 10))
+    card_items.append({"rect": rect, "text": label, "card": card})
+    i += 1
+
+def on_canvas_click(event):
+    clicked = canvas.find_closest(event.x, event.y)[0]
+    for item in card_items:
+        if clicked == item["rect"] or clicked == item["text"]:
+            if item["card"] in selected_cards:
+                selected_cards.remove(item["card"])
+                canvas.itemconfig(item["rect"], fill="white")
+            else:
+                selected_cards.append(item["card"])
+                canvas.itemconfig(item["rect"], fill="lightblue")
+canvas.bind("<Button-1>", on_canvas_click)
+
 window.mainloop()
 #window.tk.call('tk', 'scaling', 3.0)  - makes thesize of everything 3 times bigger
 
